@@ -27,7 +27,7 @@ create table if not exists peliculas(
     	p_titulo varchar(45) not null,
     	p_idioma varchar(20) not null,
     	p_subtitulos varchar(40),
-    	p_año int,
+    	p_año varchar(5),
     	primary key(id_pelicula)
 )engine = InnoDB;
 
