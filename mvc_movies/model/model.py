@@ -302,7 +302,7 @@ class Model:
     """
     def create_ac_mov(self,ap_id_actor,ap_id_pelicula):
         try:
-            sql = 'INSERT INTO actores (`ap_id_actor`,`ap_id_pelicula`) VALUES (%s,%s)'
+            sql = 'INSERT INTO actorpeliculas (`ap_id_actor`,`ap_id_pelicula`) VALUES (%s,%s)'
             vals = (ap_id_actor,ap_id_pelicula)
             self.cursor.execute(sql,vals)
             self.cnx.commit()
@@ -312,30 +312,41 @@ class Model:
             print(err)
             return err
 
-    def read_a_mov_ac(self,ap_id_pelicula):
-        try:
-            sql = 'SELECT * FROM actorpeliculas WHERE ap_id_pelicula = %s'
-            vals = (ap_id_pelicula,)
-            self.cursor.execute(sql,vals)
-            record = self.cursor.fetchone()
-            return record
-        except connector.Error as err:
-            return err
+    # def read_a_mov_ac(self,ap_id_pelicula):
+    #     try:
+    #         sql = 'SELECT * FROM actorpeliculas WHERE ap_id_pelicula = %s'
+    #         vals = (ap_id_pelicula,)
+    #         self.cursor.execute(sql,vals)
+    #         record = self.cursor.fetchone()
+    #         return record
+    #     except connector.Error as err:
+    #         return err
     
-    def read_a_ac_mov(self,ap_id_actor):
+ 
+
+    def read_a_ac_mov(self, ap_id_actor):
         try:
-            sql = 'SELECT * FROM actorpeliculas WHERE ap_id_actor = %s'
+            sql = 'SELECT peliculas.p_titulo from actorpeliculas join peliculas on peliculas.id_pelicula = actorpeliculas.ap_id_pelicula where ap_id_actor = %s'
             vals = (ap_id_actor,)
             self.cursor.execute(sql,vals)
-            record = self.cursor.fetchone()
+            record = self.cursor.fetchall()
             return record
         except connector.Error as err:
             return err
 
+    def read_a_mov_ac(self, ap_id_pelicula):
+        try:
+            sql = 'SELECT actores.a_nombre from actorpeliculas join actores on actores.id_actor = actorpeliculas.ap_id_actor where ap_id_pelicula = %s'
+            vals = (ap_id_pelicula,)
+            self.cursor.execute(sql,vals)
+            record = self.cursor.fetchall()
+            return record
+        except connector.Error as err:
+            return err
 
     def read_all_ac_mov(self):
         try:
-            sql = 'SELECT * FROM actorpeliculas'
+            sql = 'SELECT actores.a_nombre,peliculas.p_titulo from actorpeliculas join actores on actores.id_actor = actorpeliculas.ap_id_actor'
             self.cursor.execute(sql)
             record = self.cursor.fetchall()
             return record
