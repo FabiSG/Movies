@@ -1,4 +1,5 @@
 DROP DATABASE peliculas_db;
+
 Create database if not exists peliculas_db;
 use peliculas_db;
 
@@ -49,12 +50,14 @@ create table if not exists actorpeliculas(
         on update cascade
 )engine = InnoDB;
 
+# DROP table detalles_peliculas;
+
 create table if not exists detalles_peliculas(
-		id_dp int not null,
 		dp_id_pelicula int not null,
-        dp_id_director int ,
+        dp_id_director int not null,
         descripcion varchar(100) not null,
-		primary key(id_dp, dp_id_pelicula),
+        dp_duracion varchar (8) not null,
+		primary key(dp_id_pelicula),
 		constraint fk_dp_id_pelicula 
         foreign key(dp_id_pelicula)
 		references peliculas(id_pelicula)
@@ -63,9 +66,8 @@ create table if not exists detalles_peliculas(
 		constraint fkdp_id_director 
         foreign key(dp_id_director)
 		references directores(id_director)
-		ON DELETE SET NULL
+		ON DELETE CASCADE
         on update cascade
-        
 )engine = InnoDB;
 
 create table if not exists genero(
@@ -89,4 +91,3 @@ create table if not exists genpelicula(
         ON DELETE CASCADE
         on update cascade
 )engine = InnoDB;
-
