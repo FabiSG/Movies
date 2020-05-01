@@ -40,7 +40,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def read_a_genero(self,genero):
@@ -71,7 +70,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def delete_genero(self, id_genero):
@@ -100,7 +98,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def read_a_director(self,id_director):
@@ -141,7 +138,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def delete_director(self, id_genero):
@@ -170,7 +166,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def read_a_actor(self,id_director):
@@ -211,7 +206,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def delete_actor(self, id_actor):
@@ -239,7 +233,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def read_a_movie(self,id_pelicula):
@@ -280,7 +273,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def delete_movie(self, id_actor):
@@ -309,24 +301,12 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
-    # def read_a_mov_ac(self,ap_id_pelicula):
-    #     try:
-    #         sql = 'SELECT * FROM actorpeliculas WHERE ap_id_pelicula = %s'
-    #         vals = (ap_id_pelicula,)
-    #         self.cursor.execute(sql,vals)
-    #         record = self.cursor.fetchone()
-    #         return record
-    #     except connector.Error as err:
-    #         return err
-    
- 
 
     def read_a_ac_mov(self, ap_id_actor):
         try:
-            sql = 'SELECT peliculas.p_titulo from actorpeliculas join peliculas on peliculas.id_pelicula = actorpeliculas.ap_id_pelicula where ap_id_actor = %s'
+            sql = 'SELECT peliculas.id_pelicula ,peliculas.p_titulo, peliculas.p_idioma, peliculas.p_subtitulos, peliculas.p_año from actorpeliculas join peliculas on peliculas.id_pelicula = actorpeliculas.ap_id_pelicula where ap_id_actor = %s'
             vals = (ap_id_actor,)
             self.cursor.execute(sql,vals)
             record = self.cursor.fetchall()
@@ -336,7 +316,7 @@ class Model:
 
     def read_a_mov_ac(self, ap_id_pelicula):
         try:
-            sql = 'SELECT actores.a_nombre from actorpeliculas join actores on actores.id_actor = actorpeliculas.ap_id_actor where ap_id_pelicula = %s'
+            sql = 'SELECT actores.id_actor,actores.a_nombre, actores.a_apellidoPat, actores.a_apellidoMat , actores.a_nacionalidad, actores.a_fnacimiento from actorpeliculas join actores on actores.id_actor = actorpeliculas.ap_id_actor where ap_id_pelicula = %s'
             vals = (ap_id_pelicula,)
             self.cursor.execute(sql,vals)
             record = self.cursor.fetchall()
@@ -361,7 +341,6 @@ class Model:
             return True
         except connector.Error as err:
             self.cnx.rollback()
-            print(err)
             return err
 
     def delete_ac_mov(self, ap_id_actor,ap_id_pelicula):
@@ -374,4 +353,76 @@ class Model:
             return count
         except connector.Error as err:
             self.cnx.rollback()
+            return err
+
+    """
+    ***
+    * Detalles
+    **
+    """
+
+    def create_detalles_pelicula(self, dp_id_pelicula, dp_id_director, descripcion,dp_duracion):
+        try:
+            sql = 'INSERT INTO detalles_peliculas(`dp_id_pelicula`, `dp_id_director`, `descripcion`,`dp_duracion`) VALUES ( %s, %s, %s, %s)'
+            vals = ( dp_id_pelicula, dp_id_director, descripcion,dp_duracion)
+            self.cursor.execute(sql, vals)
+            self.cnx.commit()
+            return True
+        except connector.Error as err:
+            self.cnx.rollback()
+            print(err)
+            return err
+
+    def read_detalles_pelicula(self, dp_id_pelicula):
+        try: 
+            sql ='SELECT detalles_peliculas.dp_id_pelicula, peliculas.p_titulo, directores.d_nombre , detalles_peliculas.descripcion, detalles_peliculas.dp_duracion FROM peliculas JOIN detalles_peliculas ON peliculas.id_pelicula =  detalles_peliculas.dp_id_pelicula JOIN directores ON detalles_peliculas.dp_id_director = directores.id_director WHERE dp_id_pelicula = %s'
+            vals=(dp_id_pelicula, )
+            self.cursor.execute(sql, vals)
+            record = self.cursor.fetchall()
+            return record
+        except connector.Error as err:
+            return err
+
+
+    def read_all_detalles_pelicula(self):
+        try: 
+            sql ='SELECT detalles_peliculas.dp_id_pelicula, peliculas.p_titulo, directores.d_nombre , detalles_peliculas.descripcion, detalles_peliculas.dp_duracion FROM peliculas JOIN detalles_peliculas ON peliculas.id_pelicula =  detalles_peliculas.dp_id_pelicula JOIN directores ON detalles_peliculas.dp_id_director = directores.id_director'
+            self.cursor.execute(sql)
+            record = self.cursor.fetchall()
+            return record
+        except connector.Error as err:
+            return err
+
+    
+    def update_detalles_pelicula(self, fields, vals):
+        try:
+            sql = 'UPDATE detalles_peliculas SET '+','.join(fields)+'WHERE id_dp = %s'
+            self.cursor.execute(sql,vals)
+            self.cnx.commit()
+            return True
+        except connector.Error as err:
+            self.cnx.rollback()
+            return err
+
+    def delate_detalles_prlicula(self, dp_id_pelicula):
+        try:
+            sql = 'DELETE FROM detalles_peliculas WHERE dp_id_pelicula = %s '
+            vals = (dp_id_pelicula, )
+            self.cursor.execute(sql, vals)
+            self.cnx.commit()
+            count = self.cursor.rowcount
+            return count
+        except connector.Error as err:
+            self.cnx.rollback()
+            return err
+
+
+    def read_a_dir_mov(self, id_director):
+        try:
+            sql = 'SELECT peliculas.id_pelicula ,peliculas.p_titulo, peliculas.p_idioma, peliculas.p_subtitulos, peliculas.p_año from detalles_peliculas join peliculas on peliculas.id_pelicula = detalles_peliculas.dp_id_pelicula where dp_id_director = %s'
+            vals = (id_director,)
+            self.cursor.execute(sql,vals)
+            record = self.cursor.fetchall()
+            return record
+        except connector.Error as err:
             return err

@@ -1,6 +1,9 @@
-from model.model import Model
+# from model.model import Model
 
-m = Model()
+# m = Model()
+
+# data = m.read_a_dir_mov(1)
+# print(data)
 # m.create_gen('Accion')
 # m.create_gen('Accion')
 # m.create_gen('Romance')
@@ -16,7 +19,7 @@ m = Model()
 # m.create_director('Pedro','Matadamas','Marin','Mexicano','1995-05-26','Ingeniero')
 # m.create_director('Fabiola','Sierra','','Mexicano','1995-12-28','Ingeniero')
 
-#m.delete_director(3)
+# m.delete_director(3)
 # data = m.read_all_director()
 # print('Directores')
 # print(data)
@@ -46,5 +49,16 @@ m = Model()
 # data = m.read_a_mov_ac(1)
 # print(data)
 
-data = m.read_all_ac_mov()
-print(data)
+# data = m.read_all_ac_mov()
+# print(data)
+
+# m.create_detalles_pelicula(1, 2 ,'Una historia de algo','120 min')
+# data = m.read_detalles_pelicula(1)
+# print(data)
+
+
+from controller.controller import Controller
+
+c = Controller()
+
+c.start()
